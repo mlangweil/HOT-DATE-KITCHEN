@@ -1,3 +1,4 @@
+//github setup
 #include <SPI.h>
 #include <Servo.h> //This comes with the Arduino
 
