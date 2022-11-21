@@ -1,24 +1,9 @@
-/* This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-
 #include <Servo.h>
 #include <ezButton.h>
 
-//User configuration:
-int brush_pin = 6;
-int drive_pin = 5;
+//speed control
 int speed_drive = 0;
 int stop_button = 8;
-bool buttonState = 0;         // current state of the button
-
 int position_button = 4;
 int position_button_state = HIGH;
 int drive_potentiometer = A0;
@@ -26,15 +11,21 @@ int brush_potentiometer = A1;
 int PWMvalue_drive = speed_drive * 5 + 1500; //scale up to 1000-2000
 int speed_brush;
 int PWMvalue_brush = speed_brush * 5 + 1500; //scale up to 1000-2000
+int stop_value = 1500;
+int loading_time = 5000;
 
+
+//LED pins
 int green_led = 8;
 int yellow_led = 9;
 int red_led = 10;
 int e_stop = 13;
 
-
+//Servo intializers
 Servo brush;
 Servo drive;
+int brush_pin = 6;
+int drive_pin = 5;
 
 void setup() {
  Serial.begin(9600);
@@ -63,22 +54,22 @@ int PWMvalue_brush = speed_brush * 5 + 1500; //scale up to 1000-2000
 position_button_state = digitalRead(position_button);
 
   if(position_button_state == LOW){
-    brush.writeMicroseconds(PWMvalue_brush);
-     drive.writeMicroseconds(1500);
+     brush.writeMicroseconds(PWMvalue_brush);
+     drive.writeMicroseconds(stop_value);
      digitalWrite(green_led, LOW);
      digitalWrite(red_led, HIGH);
-     delay(5000);
+     delay(loading_time);
      digitalWrite(red_led, LOW);
      digitalWrite(green_led, HIGH);
-     brush.writeMicroseconds(1500);
+     brush.writeMicroseconds(stop_value);
      drive.writeMicroseconds(PWMvalue_drive);
   }else{
      drive.writeMicroseconds(PWMvalue_drive);
-     brush.writeMicroseconds(1500);
+     brush.writeMicroseconds(stop_value);
   }
   if (speed_drive == 0) {
-   digitalWrite(red_led, HIGH);
-   digitalWrite(green_led, LOW);
+     digitalWrite(red_led, HIGH);
+     digitalWrite(green_led, LOW);
   }
   else{
      digitalWrite(green_led, HIGH);
